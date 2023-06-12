@@ -42,7 +42,7 @@ def print_predictions(preds):
         st.write('Доброкачественная)')
 
 
-st.title('Нейросеть для обнаружения рака кожи ')
+st.title('Нейросеть для обнаружения туберкулёза по рентгеновским снимкам')
 img = load_image()
 result = st.button('Распознать изображение')
 if result:
