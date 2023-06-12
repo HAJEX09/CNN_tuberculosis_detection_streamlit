@@ -1,58 +1,54 @@
+import io
 import streamlit as st
-import numpy as np
 from PIL import Image
-from tensorflow.keras.models import load_model
-import tensorflow as tf
-
-from tempfile import NamedTemporaryFile
+from keras.models import load_model
+from tensorflow.keras.applications.efficientnet import preprocess_input
+from tensorflow.keras.applications.efficientnet import decode_predictions
 from tensorflow.keras.preprocessing import image
+import numpy as np
 
-st.set_option('deprecation.showfileUploaderEncoding', False)
+# Загрузка модели
+model = load_model('mymodel.h5')
 
-
-@st.cache(allow_output_mutation=True)
-def loading_model():
-    fp = "model.h5"
-    model_loader = load_model(fp)
-    return model_loader
-
-
-cnn = loading_model()
-st.write("""
-# Нейросеть для обнаружения туберкулёза по рентгеновским снимкам
-""")
+def preprocess_image(img):
+    img = img.resize((500, 500))
+    x = image.img_to_array(img)
+    x = np.expand_dims(x, axis=0)
+    x = preprocess_input(x)
+    return x
 
 
-temp = st.file_uploader("Выберите изображение для распознавания")
-#temp = temp.decode()
-
-buffer = temp
-temp_file = NamedTemporaryFile(delete=False)
-if buffer:
-    temp_file.write(buffer.getvalue())
-    st.write(image.load_img(temp_file.name))
-
-else:
-
-    img = image.load_img(temp_file.name, target_size=(
-        500, 500), color_mode='grayscale')
-
-    # Preprocessing the image
-    pp_img = image.img_to_array(img)
-    pp_img = pp_img/255
-    pp_img = np.expand_dims(pp_img, axis=0)
-
-    # predict
-    preds = cnn.predict(pp_img)
-    if preds >= 0.5:
-        out = ('I am {:.2%} percent confirmed that this is a Tuberculosis case'.format(
-            preds[0][0]))
-
+def load_image():
+    uploaded_file = st.file_uploader(label='Выберите изображение для распознавания')
+    if uploaded_file is not None:
+        image_data = uploaded_file.getvalue()
+        st.image(image_data)
+        return Image.open(io.BytesIO(image_data))
     else:
-        out = ('I am {:.2%} percent confirmed that this is a Normal case'.format(
-            1-preds[0][0]))
+        return None
 
-    st.success(out)
 
-    image = Image.open(temp)
-    st.image(image, use_column_width=True)
+def print_predictions(preds):
+    classes = decode_predictions(preds, top=2)[0]
+    for cl in classes:
+        st.write(cl[1], cl[2])
+
+
+
+def print_predictions(preds):
+    if preds[[0]] < 0.5:
+        st.write('Злокачественная! Пожалуйста, обратитесь к доктору!')
+    else:
+        st.write('Доброкачественная)')
+
+
+st.title('Нейросеть для обнаружения рака кожи ')
+img = load_image()
+result = st.button('Распознать изображение')
+if result:
+    x = preprocess_image(img)
+    preds = model.predict(x)
+    res = float(preds)
+    st.write('**Результаты распознавания:**')
+    print_predictions(preds)
+    st.write(res)
