@@ -8,7 +8,7 @@ from tensorflow.keras.preprocessing import image
 import numpy as np
 
 # Загрузка модели
-model = load_model('mymodel.h5')
+model = load_model('model.h5')
 
 def preprocess_image(img):
     img = img.resize((500, 500))
