@@ -32,10 +32,6 @@ if buffer:
     temp_file.write(buffer.getvalue())
     st.write(image.load_img(temp_file.name))
 
-
-if buffer is None:
-    st.text("Oops! that doesn't look like an image. Try again.")
-
 else:
 
     img = image.load_img(temp_file.name, target_size=(
