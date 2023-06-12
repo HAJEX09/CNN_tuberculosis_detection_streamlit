@@ -19,11 +19,11 @@ def loading_model():
 
 cnn = loading_model()
 st.write("""
-# X-Ray Classification [Tuberculosis/Normal]
+# Нейросеть для обнаружения туберкулёза по рентгеновским снимкам
 """)
 
 
-temp = st.file_uploader("Upload X-Ray Image")
+temp = st.file_uploader("Выберите изображение для распознавания")
 #temp = temp.decode()
 
 buffer = temp
