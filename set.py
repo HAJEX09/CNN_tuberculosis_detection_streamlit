@@ -11,7 +11,7 @@ import numpy as np
 model = load_model('mymodel.h5')
 
 def preprocess_image(img):
-    img = img.resize((128, 128))
+    img = img.resize((28, 28))
     x = image.img_to_array(img)
     x = np.expand_dims(x, axis=0)
     x = preprocess_input(x)
