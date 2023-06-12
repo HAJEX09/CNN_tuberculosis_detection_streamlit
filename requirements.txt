@@ -1,0 +1,10 @@
+streamlit
+pandas
+numpy
+sklearn
+Pillow
+tensorflow
+opencv-python
+keras
+imbalanced-learn
+
