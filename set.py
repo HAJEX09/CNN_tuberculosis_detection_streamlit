@@ -34,13 +34,11 @@ def print_predictions(preds):
         st.write(cl[1], cl[2])
 
 
-
-def print_predictions(preds):
+def print_predictions2(preds):
     if preds[[0]] < 0.5:
-        st.write('Злокачественная! Пожалуйста, обратитесь к доктору!')
-      
-    else:
         st.write('Доброкачественная)')
+    else:
+        st.write('Злокачественная! Пожалуйста, обратитесь к доктору!')
 
 
 st.title('Нейросеть для обнаружения рака кожи ')
@@ -49,7 +47,5 @@ result = st.button('Распознать изображение')
 if result:
     x = preprocess_image(img)
     preds = model.predict(x)
-    res = float(preds)
     st.write('**Результаты распознавания:**')
-    print_predictions(preds)
-    st.write(res)
+    print_predictions2(preds)
