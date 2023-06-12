@@ -1,51 +1,60 @@
-import io
+from xml.etree.ElementTree import PI
 import streamlit as st
 from PIL import Image
-from keras.models import load_model
-from tensorflow.keras.applications.efficientnet import preprocess_input
-from tensorflow.keras.applications.efficientnet import decode_predictions
-from tensorflow.keras.preprocessing import image
+import tensorflow as tf
+import cv2
 import numpy as np
+import emoji 
 
-# Загрузка модели
-model = load_model('mymodel.h5')
+model_path= "mymodel.h5"
 
-def preprocess_image(img):
-    img = img.resize((28, 28))
-    x = image.img_to_array(img)
-    x = np.expand_dims(x, axis=0)
-    x = preprocess_input(x)
-    return x
+st.title("TuberCulosis Detection System 💻")
+st.write()
+st.write(" ")
 
 
-def load_image():
-    uploaded_file = st.file_uploader(label='Выберите изображение для распознавания')
-    if uploaded_file is not None:
-        image_data = uploaded_file.getvalue()
-        st.image(image_data)
-        return Image.open(io.BytesIO(image_data))
+header = st.container()
+with header:
+  st.write(">Below is the CNN(lenet) model which i used for the tuberculosis detection using human chest X-rays ")
+  img = Image.open('mymodel.h5.png')
+  
+  st.image(img,caption='CNN model')
+
+
+img = Image.open("hello.png")
+st.image(img)
+
+
+upload = st.file_uploader('Upload a chest X-ray image')
+
+if upload is not None:
+  file_bytes = np.asarray(bytearray(upload.read()), dtype=np.uint8)
+  opencv_image = cv2.imdecode(file_bytes, 1)
+  
+  img = Image.open(upload)
+  st.image(img,caption='Uploaded Image',width=300)
+  if(st.button('Analyze 👈')):
+    model = tf.keras.models.load_model(model_path)
+    # x = cv2.resize(opencv_image,(28,28))
+    # x = np.expand_dims(x,axis=0) 
+    x=[] 
+    img = cv2.resize(opencv_image,(28,28))
+    if img.shape[2]==1:
+      img=np.dstack([img,img,img])
+    # opencv_image = cv2.cvtColor(opencv_image,cv2.COLOR_BGR2RGB) # Color from BGR to RGB
+    
+    img=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+    img =np.array(img)
+    img=img/255
+    x.append(img)  
+    y = model.predict(np.array(x))
+    # st.write(y)
+    y=(y>0.5)
+    ans=y[0,1]
+    # st.write(ans)
+    if(ans==0):
+      st.success('Tuberculosis Not Detected !!')
+    elif(ans==1):
+      st.error('Tuberculosis Detected !!')
     else:
-        return None
-
-
-def print_predictions(preds):
-    classes = decode_predictions(preds, top=2)[0]
-    for cl in classes:
-        st.write(cl[1], cl[2])
-
-
-def print_predictions2(preds):
-    if preds[[0]] < 0.5:
-        st.write('Доброкачественная)')
-    else:
-        st.write('Злокачественная! Пожалуйста, обратитесь к доктору!')
-
-
-st.title('Нейросеть для обнаружения рака кожи ')
-img = load_image()
-result = st.button('Распознать изображение')
-if result:
-    x = preprocess_image(img)
-    preds = model.predict(x)
-    st.write('**Результаты распознавания:**')
-    print_predictions2(preds)
+      st.error('Other Pulmonary Disorder')
