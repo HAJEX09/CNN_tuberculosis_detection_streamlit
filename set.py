@@ -18,10 +18,13 @@ def loading_model():
 
 
 cnn = loading_model()
-st.title('Нейросеть для обнаружения туберкулёза по рентгеновскому снимку')
+st.write("""
+# X-Ray Classification [Tuberculosis/Normal]
+by AJAS
+""")
 
 
-temp = st.file_uploader("Распознать изображение")
+temp = st.file_uploader("Upload X-Ray Image")
 #temp = temp.decode()
 
 buffer = temp
@@ -30,6 +33,9 @@ if buffer:
     temp_file.write(buffer.getvalue())
     st.write(image.load_img(temp_file.name))
 
+
+if buffer is None:
+    st.text("Oops! that doesn't look like an image. Try again.")
 
 else:
 
