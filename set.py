@@ -24,7 +24,7 @@ st.write("""
 """)
 
 
-temp = st.file_uploader("Upload X-Ray Image")
+temp = st.file_uploader("Выберите изображение для распознавания")
 #temp = temp.decode()
 
 buffer = temp
