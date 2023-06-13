@@ -19,7 +19,7 @@ def loading_model():
 
 cnn = loading_model()
 st.write("""
-# ейросеть для обнаружения туберкулеза по рентгеновскому снимку
+# Нейросеть для обнаружения туберкулеза по рентгеновскому снимку
 
 """)
 
@@ -50,11 +50,11 @@ else:
     # predict
     preds = cnn.predict(pp_img)
     if preds >= 0.5:
-        out = ('I am {:.2%} percent confirmed that this is a Tuberculosis case'.format(
+        out = ('{:.2%}  '.format(
             preds[0][0]))
 
     else:
-        out = ('I am {:.2%} percent confirmed that this is a Normal case'.format(
+        out = ('{:.2%} '.format(
             1-preds[0][0]))
 
     st.success(out)
