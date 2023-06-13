@@ -34,8 +34,8 @@ if buffer:
     st.write(image.load_img(temp_file.name))
 
 
-if buffer is None:
-    st.text("Oops! that doesn't look like an image. Try again.")
+#if buffer is None:
+#    st.text("Oops! that doesn't look like an image. Try again.")
 
 else:
 
